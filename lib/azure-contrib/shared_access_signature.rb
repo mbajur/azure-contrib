@@ -21,9 +21,10 @@ module Azure
 
         attr_accessor :uri, :options
 
-        def initialize(uri, options = {}, account =  ENV['AZURE_STORAGE_ACCOUNT'])
+        def initialize(uri, options = {}, account =  ENV['AZURE_STORAGE_ACCOUNT'], access_key = ENV['AZURE_STORAGE_ACCESS_KEY'])
           # This is the uri that we are signing
           @uri = Addressable::URI.parse(uri)
+          @access_key = access_key
 
           is_blob = options[:resource] == 'b'
 
@@ -70,7 +71,7 @@ module Azure
           string_to_sign << options[:canonicalized_resource]
           string_to_sign << options[:identifier]
 
-          Azure::Core::Auth::Signer.new(ENV['AZURE_STORAGE_ACCESS_KEY']).sign(string_to_sign.join("\n").force_encoding("UTF-8"))
+          Azure::Core::Auth::Signer.new(@access_key).sign(string_to_sign.join("\n").force_encoding("UTF-8"))
         end
 
 
